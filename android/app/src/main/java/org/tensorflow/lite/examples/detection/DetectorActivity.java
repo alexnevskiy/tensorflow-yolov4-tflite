@@ -16,6 +16,7 @@
 
 package org.tensorflow.lite.examples.detection;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -54,9 +55,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     private static final int TF_OD_API_INPUT_SIZE = 416;
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
-    private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
+    private static String TF_OD_API_MODEL_FILE = "yolov4-416-fp32-tiny.tflite";
+    private static boolean isTiny = true;
 
-    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco.txt";
+    private static String TF_OD_API_LABELS_FILE = "file:///android_asset/coco.txt";
 
     private static final DetectorMode MODE = DetectorMode.TF_OD_API;
     private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
@@ -97,13 +99,20 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
         int cropSize = TF_OD_API_INPUT_SIZE;
 
+        Intent myIntent = getIntent();
+        TF_OD_API_MODEL_FILE = myIntent.getStringExtra("model");
+        TF_OD_API_LABELS_FILE = myIntent.getStringExtra("names");
+        isTiny = myIntent.getBooleanExtra("isTiny", true);
+        Log.i("onPreviewSizeChosen", String.valueOf(isTiny));
+
         try {
             detector =
                     YoloV4Classifier.create(
                             getAssets(),
                             TF_OD_API_MODEL_FILE,
                             TF_OD_API_LABELS_FILE,
-                            TF_OD_API_IS_QUANTIZED);
+                            TF_OD_API_IS_QUANTIZED,
+                            isTiny);
 //            detector = TFLiteObjectDetectionAPIModel.create(
 //                    getAssets(),
 //                    TF_OD_API_MODEL_FILE,

@@ -72,9 +72,13 @@ public class YoloV4Classifier implements Classifier {
             final AssetManager assetManager,
             final String modelFilename,
             final String labelFilename,
-            final boolean isQuantized)
+            final boolean isQuantized,
+            final boolean isTiny)
             throws IOException {
         final YoloV4Classifier d = new YoloV4Classifier();
+
+        YoloV4Classifier.isTiny = isTiny;
+        Log.i("Classifier.create", String.valueOf(YoloV4Classifier.isTiny));
 
         String actualFilename = labelFilename.split("file:///android_asset/")[1];
         InputStream labelsInput = assetManager.open(actualFilename);
@@ -178,7 +182,7 @@ public class YoloV4Classifier implements Classifier {
     private static boolean isGPU = true;
 
     // tiny or not
-    private static boolean isTiny = false;
+    private static boolean isTiny = true;
 
     // config yolov4 tiny
     private static final int[] OUTPUT_WIDTH_TINY = new int[]{2535, 2535};
